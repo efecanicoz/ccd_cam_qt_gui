@@ -10,6 +10,14 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+
+typedef struct {
+    QString name;
+    quint16 low;
+    qint16 high;
+}config_str;
+
+
 class QGLCanvas : public QOpenGLWidget
 {
 public:
@@ -36,12 +44,17 @@ signals:
     void img_updated();
 };
 
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public slots:
     void fb_callback();
+    void onOffEvent();
+    void show_widget();
+    void hide_widget();
+    void addNewCfg();
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -51,6 +64,9 @@ private:
     Ui::MainWindow *ui;
     WorkerThread *workerThread;
     QGLCanvas widget;
+    void readCfgFile();
+    void writeCfgFile();
+    QList<config_str> config_list;
 };
 
 #endif // MAINWINDOW_H

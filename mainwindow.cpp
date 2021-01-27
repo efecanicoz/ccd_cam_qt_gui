@@ -6,6 +6,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QDateTime>
+#include <QFile>
 
 void WorkerThread::run()
 {
@@ -89,11 +90,92 @@ MainWindow::MainWindow(QWidget *parent)
     workerThread->raw_image = new QImage(2700, 1, QImage::Format_RGB888);
     workerThread->start();
 
+    widget.setGeometry(0,0,900,50);
+
     connect(workerThread, SIGNAL(img_updated()), this, SLOT(fb_callback()));
 
-    widget.setGeometry(0,0,900,50);
-    widget.setImage(*workerThread->raw_image);
-    widget.show();
+    readCfgFile();
+    //widget.show();
+    connect(ui->pb_on_off, SIGNAL(clicked()), this, SLOT(onOffEvent()));
+    connect(ui->pb_run, SIGNAL(clicked()), this, SLOT(show_widget()));
+    connect(ui->pb_stop, SIGNAL(clicked()), this, SLOT(hide_widget()));
+    connect(ui->pb_new, SIGNAL(clicked()), this, SLOT(addNewCfg()));
+
+}
+
+void MainWindow::addNewCfg()
+{
+    config_str temp_cfg;
+    temp_cfg.name = "Unnamed config";
+    temp_cfg.low = 100;
+    temp_cfg.high = 700;
+    config_list.append(temp_cfg);
+    this->ui->ddl_configuration->addItem(temp_cfg.name);
+    this->ui->ddl_configuration->setCurrentIndex(this->ui->ddl_configuration->count() -1);
+
+    writeCfgFile();
+}
+
+void MainWindow::writeCfgFile()
+{
+    int i;
+    QFile file("./config.csv");
+    QString line;
+
+    if(file.open(QIODevice::WriteOnly))
+    {
+        for(i = 0; i < config_list.count(); i++)
+        {
+            line = config_list[i].name + "," + QString::number(config_list[i].low) + "," + QString::number(config_list[i].high) + "\n";
+            file.write(line.toUtf8());
+        }
+    }
+    file.close();
+}
+
+void MainWindow::readCfgFile()
+{
+    config_str temp_cfg;
+    QFile file("./config.csv");
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        //file not exists
+        temp_cfg.name = "Config 1";
+        temp_cfg.low = 100;
+        temp_cfg.high = 700;
+        this->config_list.append(temp_cfg);
+        this->ui->ddl_configuration->addItem(temp_cfg.name);
+    }
+    else
+    {
+        while(!file.atEnd())
+        {
+            QString line = file.readLine();
+            QStringList fields = line.split(",");
+            temp_cfg.name = fields[0];
+            temp_cfg.low = fields[1].toUInt();
+            temp_cfg.high = fields[2].toUInt();
+            this->ui->ddl_configuration->addItem(fields[0]);
+            this->config_list.append(temp_cfg);
+        }
+    }
+    file.close();
+    return;
+}
+
+void MainWindow::show_widget()
+{
+    this->widget.show();
+}
+
+void MainWindow::hide_widget()
+{
+    this->widget.hide();
+}
+
+void MainWindow::onOffEvent()
+{
+    QApplication::quit();
 }
 
 MainWindow::~MainWindow()
