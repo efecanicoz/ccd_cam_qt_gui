@@ -85,82 +85,48 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    int i;
+
     ui->setupUi(this);
     workerThread = new WorkerThread();
     workerThread->raw_image = new QImage(2700, 1, QImage::Format_RGB888);
     workerThread->start();
 
+    settings_window = new cfgWindow(this, &config_list);
+
     widget.setGeometry(0,0,900,50);
 
-    connect(workerThread, SIGNAL(img_updated()), this, SLOT(fb_callback()));
 
-    readCfgFile();
+    //fill the ddl
+    readCfgFile(config_list);
+    for(i = 0; i < config_list.count(); i++)
+        ui->ddl_configuration->addItem(config_list[i].name);
+
     //widget.show();
     connect(ui->pb_on_off, SIGNAL(clicked()), this, SLOT(onOffEvent()));
     connect(ui->pb_run, SIGNAL(clicked()), this, SLOT(show_widget()));
     connect(ui->pb_stop, SIGNAL(clicked()), this, SLOT(hide_widget()));
-    connect(ui->pb_new, SIGNAL(clicked()), this, SLOT(addNewCfg()));
-
+    connect(ui->pb_settings, SIGNAL(clicked()), this, SLOT(show_settings()));
+    connect(workerThread, SIGNAL(img_updated()), this, SLOT(fb_callback()));
+    connect(settings_window, SIGNAL(list_updated()), this, SLOT(update_ddl_list()));
 }
 
-void MainWindow::addNewCfg()
-{
-    config_str temp_cfg;
-    temp_cfg.name = "Unnamed config";
-    temp_cfg.low = 100;
-    temp_cfg.high = 700;
-    config_list.append(temp_cfg);
-    this->ui->ddl_configuration->addItem(temp_cfg.name);
-    this->ui->ddl_configuration->setCurrentIndex(this->ui->ddl_configuration->count() -1);
-
-    writeCfgFile();
-}
-
-void MainWindow::writeCfgFile()
+void MainWindow::update_ddl_list()
 {
     int i;
-    QFile file("./config.csv");
-    QString line;
 
-    if(file.open(QIODevice::WriteOnly))
-    {
-        for(i = 0; i < config_list.count(); i++)
-        {
-            line = config_list[i].name + "," + QString::number(config_list[i].low) + "," + QString::number(config_list[i].high) + "\n";
-            file.write(line.toUtf8());
-        }
-    }
-    file.close();
+    //first remove everything
+        ui->ddl_configuration->clear();
+
+    for(i = 0; i < config_list.count(); i++)
+        ui->ddl_configuration->addItem(config_list[i].name);
+
 }
 
-void MainWindow::readCfgFile()
+void MainWindow::show_settings()
 {
-    config_str temp_cfg;
-    QFile file("./config.csv");
-    if(!file.open(QIODevice::ReadOnly))
-    {
-        //file not exists
-        temp_cfg.name = "Config 1";
-        temp_cfg.low = 100;
-        temp_cfg.high = 700;
-        this->config_list.append(temp_cfg);
-        this->ui->ddl_configuration->addItem(temp_cfg.name);
-    }
-    else
-    {
-        while(!file.atEnd())
-        {
-            QString line = file.readLine();
-            QStringList fields = line.split(",");
-            temp_cfg.name = fields[0];
-            temp_cfg.low = fields[1].toUInt();
-            temp_cfg.high = fields[2].toUInt();
-            this->ui->ddl_configuration->addItem(fields[0]);
-            this->config_list.append(temp_cfg);
-        }
-    }
-    file.close();
-    return;
+    settings_window->show();
+    hide();
 }
 
 void MainWindow::show_widget()

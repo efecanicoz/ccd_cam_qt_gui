@@ -5,18 +5,12 @@
 #include <QThread>
 #include <QUdpSocket>
 #include <QOpenGLWidget>
+#include "common.h"
+#include "cfgWindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
-
-
-typedef struct {
-    QString name;
-    quint16 low;
-    qint16 high;
-}config_str;
-
 
 class QGLCanvas : public QOpenGLWidget
 {
@@ -54,7 +48,8 @@ public slots:
     void onOffEvent();
     void show_widget();
     void hide_widget();
-    void addNewCfg();
+    void show_settings();
+    void update_ddl_list();
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -64,9 +59,9 @@ private:
     Ui::MainWindow *ui;
     WorkerThread *workerThread;
     QGLCanvas widget;
-    void readCfgFile();
-    void writeCfgFile();
     QList<config_str> config_list;
+    cfgWindow *settings_window;
+
 };
 
 #endif // MAINWINDOW_H
