@@ -132,7 +132,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pb_settings, SIGNAL(clicked()), this, SLOT(show_settings()));
     connect(workerThread, SIGNAL(img_updated()), this, SLOT(fb_callback()));
     connect(settings_window, SIGNAL(list_updated()), this, SLOT(update_ddl_list()));
-    connect(ui->slider_speed, SIGNAL(sliderReleased()), this, SLOT(update_slider_text()));
+    connect(ui->slider_speed, SIGNAL(valueChanged(int)), this, SLOT(update_slider_text(int)));
 }
 
 void MainWindow::update_ddl_list()
@@ -180,9 +180,9 @@ void MainWindow::onOffEvent()
     QApplication::quit();
 }
 
-void MainWindow::update_slider_text()
+void MainWindow::update_slider_text(int value)
 {
-    ui->lbl_speed->setText(QString("Speed(%")+ QString::number(ui->slider_speed->value()) + QString(")"));
+    ui->lbl_speed->setText(QString("Speed(%")+ QString::number(value) + QString(")"));
 }
 
 MainWindow::~MainWindow()
