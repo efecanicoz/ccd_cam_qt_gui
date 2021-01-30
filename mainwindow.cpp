@@ -82,6 +82,24 @@ void MainWindow::fb_callback()
     this->widget.update();
 }
 
+void MainWindow::initGPIO()
+{
+    QFile exportFile("/sys/class/gpio/export");
+    exportFile.open(QIODevice::WriteOnly);
+    exportFile.write("4");
+    exportFile.close();
+
+    QFile directionFile("/sys/class/gpio/gpio4/direction");
+    directionFile.open(QIODevice::WriteOnly);
+    directionFile.write("out");
+    directionFile.close();
+
+    QFile stateFile("/sys/class/gpio/gpio4/value");
+    stateFile.open(QIODevice::WriteOnly);
+    stateFile.write("1");
+    stateFile.close();
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -114,7 +132,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pb_settings, SIGNAL(clicked()), this, SLOT(show_settings()));
     connect(workerThread, SIGNAL(img_updated()), this, SLOT(fb_callback()));
     connect(settings_window, SIGNAL(list_updated()), this, SLOT(update_ddl_list()));
-    //connect(ui->slider_speed, &QSlider::valueChanged, this, SLOT(update_slider_text()));
+    connect(ui->slider_speed, SIGNAL(sliderReleased()), this, SLOT(update_slider_text()));
 }
 
 void MainWindow::update_ddl_list()
@@ -137,11 +155,23 @@ void MainWindow::show_settings()
 
 void MainWindow::show_widget()
 {
+
+    QFile stateFile("/sys/class/gpio/gpio4/value");
+    stateFile.open(QIODevice::WriteOnly);
+    stateFile.write("0");
+    stateFile.close();
+
     this->widget.show();
 }
 
 void MainWindow::hide_widget()
 {
+
+    QFile stateFile("/sys/class/gpio/gpio4/value");
+    stateFile.open(QIODevice::WriteOnly);
+    stateFile.write("1");
+    stateFile.close();
+
     this->widget.hide();
 }
 
@@ -152,7 +182,7 @@ void MainWindow::onOffEvent()
 
 void MainWindow::update_slider_text()
 {
-    ui->lbl_speed->setText(QString("Speed(%")+ui->slider_speed->value()+QString(")"));
+    ui->lbl_speed->setText(QString("Speed(%")+ QString::number(ui->slider_speed->value()) + QString(")"));
 }
 
 MainWindow::~MainWindow()

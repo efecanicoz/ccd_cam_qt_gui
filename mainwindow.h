@@ -62,6 +62,7 @@ private:
     QGLCanvas widget;
     QList<config_str> config_list;
     cfgWindow *settings_window;
+    void initGPIO();
 
 };
 

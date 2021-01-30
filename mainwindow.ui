@@ -356,7 +356,7 @@ QSlider::sub-page:vertical {
      <item>
       <widget class="QSlider" name="slider_speed">
        <property name="maximum">
-        <number>1024</number>
+        <number>100</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
