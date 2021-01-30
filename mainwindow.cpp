@@ -108,7 +108,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->setupUi(this);
     Qt::WindowFlags flags = windowFlags();
-    setWindowFlags(flags | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    setWindowFlags(flags | Qt::FramelessWindowHint);
+    initGPIO();
 
 
     workerThread = new WorkerThread();
