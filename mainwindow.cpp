@@ -88,11 +88,14 @@ void MainWindow::initGPIO()
     exportFile.open(QIODevice::WriteOnly);
     exportFile.write("4");
     exportFile.close();
+    QThread::usleep(1000 * 100);
 
     QFile directionFile("/sys/class/gpio/gpio4/direction");
     directionFile.open(QIODevice::WriteOnly);
     directionFile.write("out");
     directionFile.close();
+
+    QThread::usleep(1000 * 100);
 
     QFile stateFile("/sys/class/gpio/gpio4/value");
     stateFile.open(QIODevice::WriteOnly);
