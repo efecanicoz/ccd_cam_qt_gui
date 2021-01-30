@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/img">
         <file>img/settings.png</file>
-        <file>img/on_off.png</file>
+        <file>img/pause.png</file>
+        <file>img/play.png</file>
+        <file>img/power.png</file>
+        <file>img/stop.png</file>
     </qresource>
 </RCC>

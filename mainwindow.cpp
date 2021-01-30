@@ -7,6 +7,7 @@
 #include <QGraphicsView>
 #include <QDateTime>
 #include <QFile>
+#include <QSlider>
 
 void WorkerThread::run()
 {
@@ -88,6 +89,8 @@ MainWindow::MainWindow(QWidget *parent)
     int i;
 
     ui->setupUi(this);
+
+
     workerThread = new WorkerThread();
     workerThread->raw_image = new QImage(2700, 1, QImage::Format_RGB888);
     workerThread->start();
@@ -109,6 +112,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pb_settings, SIGNAL(clicked()), this, SLOT(show_settings()));
     connect(workerThread, SIGNAL(img_updated()), this, SLOT(fb_callback()));
     connect(settings_window, SIGNAL(list_updated()), this, SLOT(update_ddl_list()));
+    connect(ui->slider_speed, &QSlider::valueChanged, this, SLOT(update_slider_text()));
 }
 
 void MainWindow::update_ddl_list()
@@ -142,6 +146,11 @@ void MainWindow::hide_widget()
 void MainWindow::onOffEvent()
 {
     QApplication::quit();
+}
+
+void MainWindow::update_slider_text()
+{
+    ui->lbl_speed->setText(QString("Speed(%")+ui->slider_speed->value()+QString(")"));
 }
 
 MainWindow::~MainWindow()

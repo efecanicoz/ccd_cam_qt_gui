@@ -50,6 +50,7 @@ public slots:
     void hide_widget();
     void show_settings();
     void update_ddl_list();
+    void update_slider_text();
 
 public:
     MainWindow(QWidget *parent = nullptr);
