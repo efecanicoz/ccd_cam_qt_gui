@@ -54,7 +54,8 @@ QSlider::add-page:vertical {
 }
 
 QSlider::sub-page:vertical {
-    background: brown;
+ background: rgb(110,56,32);
+background: qlineargradient(x1: 0.5, y1: 0.5 x2: 0.5, y2: 1, stop: 0 #2f170d, stop: 1 #72361e );
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
