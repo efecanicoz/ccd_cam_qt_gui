@@ -90,10 +90,21 @@ void MainWindow::initGPIO()
     exportFile.close();
     QThread::usleep(1000 * 100);
 
+    QFile exportFile17("/sys/class/gpio/export");
+    exportFile17.open(QIODevice::WriteOnly);
+    exportFile17.write("17");
+    exportFile17.close();
+    QThread::usleep(1000 * 100);
+
     QFile directionFile("/sys/class/gpio/gpio4/direction");
     directionFile.open(QIODevice::WriteOnly);
     directionFile.write("out");
     directionFile.close();
+
+    QFile directionFile17("/sys/class/gpio/gpio17/direction");
+    directionFile17.open(QIODevice::WriteOnly);
+    directionFile17.write("out");
+    directionFile17.close();
 
     QThread::usleep(1000 * 100);
 
@@ -101,6 +112,11 @@ void MainWindow::initGPIO()
     stateFile.open(QIODevice::WriteOnly);
     stateFile.write("1");
     stateFile.close();
+
+    QFile stateFile17("/sys/class/gpio/gpio17/value");
+    stateFile17.open(QIODevice::WriteOnly);
+    stateFile17.write("0");
+    stateFile17.close();
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -165,6 +181,11 @@ void MainWindow::show_widget()
     stateFile.write("0");
     stateFile.close();
 
+    QFile stateFile17("/sys/class/gpio/gpio17/value");
+    stateFile17.open(QIODevice::WriteOnly);
+    stateFile17.write("1");
+    stateFile17.close();
+
     this->widget.show();
 }
 
@@ -175,6 +196,11 @@ void MainWindow::hide_widget()
     stateFile.open(QIODevice::WriteOnly);
     stateFile.write("1");
     stateFile.close();
+
+    QFile stateFile17("/sys/class/gpio/gpio17/value");
+    stateFile17.open(QIODevice::WriteOnly);
+    stateFile17.write("0");
+    stateFile17.close();
 
     this->widget.hide();
 }
