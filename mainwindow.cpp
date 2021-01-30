@@ -112,7 +112,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pb_settings, SIGNAL(clicked()), this, SLOT(show_settings()));
     connect(workerThread, SIGNAL(img_updated()), this, SLOT(fb_callback()));
     connect(settings_window, SIGNAL(list_updated()), this, SLOT(update_ddl_list()));
-    connect(ui->slider_speed, &QSlider::valueChanged, this, SLOT(update_slider_text()));
+    //connect(ui->slider_speed, &QSlider::valueChanged, this, SLOT(update_slider_text()));
 }
 
 void MainWindow::update_ddl_list()

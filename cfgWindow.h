@@ -7,7 +7,7 @@
 #include "cfgnamewindow.h"
 
 namespace Ui {
-class cfgWindow;
+class Dialog;
 }
 
 class cfgWindow : public QDialog
@@ -32,7 +32,7 @@ public slots:
 
 private:
     QWidget *main_window;
-    Ui::cfgWindow *ui;
+    Ui::Dialog *ui;
     void save();
     cfgNameWindow *nameWindow;
 

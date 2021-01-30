@@ -3,7 +3,7 @@
 
 cfgWindow::cfgWindow(QWidget *parent, QList<config_str> *cl) :
     QDialog(parent),
-    ui(new Ui::cfgWindow)
+    ui(new Ui::Dialog)
 {
     this->main_window = parent;
     this->config_list = cl;
