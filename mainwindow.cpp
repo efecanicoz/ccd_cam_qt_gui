@@ -20,8 +20,8 @@ void WorkerThread::run()
     int i;
 
 
-    fb.append(QString("P6 2700 1 255 "));
-    fb.resize(8114); //2700 * 3 + 14(header)
+    fb.append(QString("P6 5400 1 255 "));
+    fb.resize(((2700 * 3) * 2) + 14); //2700 * 3 + 14(header)
     //for(i = 0; i < 8100; i++)
     //    fb[i + 14] = i%255;//framebuffer[2*i+1];
     //ret = raw_image->loadFromData(fb);
@@ -33,7 +33,9 @@ void WorkerThread::run()
     else
         qDebug() << "Bound";
 
-    framebuffer.resize(16200);
+    framebuffer.resize((16200 * 2));
+
+#define UDP_FRAME_SIZE (601)
 
     while(1)
     {
@@ -51,13 +53,13 @@ void WorkerThread::run()
             }
             if(locked == true)
             {
-                if(frag_no != 16)
-                    framebuffer.replace((frag_no*1000), 1000, (datagram.data()+1),1000);
+                if(frag_no != 53)
+                    framebuffer.replace((frag_no*UDP_FRAME_SIZE), UDP_FRAME_SIZE, (datagram.data()+1),UDP_FRAME_SIZE);
                 else
                 {
                     qDebug() << QDateTime::currentDateTime().toString("mm:ss,zzz");
-                    framebuffer.replace((frag_no*1000), 100, (datagram.data()+1),200);
-                    for(i = 0; i < (8100 - 1); i++)
+                    framebuffer.replace((frag_no*UDP_FRAME_SIZE), UDP_FRAME_SIZE, (datagram.data()+1),UDP_FRAME_SIZE);
+                    for(i = 0; i < (16200 - 1); i++)
                     {
                         quint16 tmp_u16;
                         tmp_u16 = framebuffer[i]<<8 | framebuffer[i+1];
