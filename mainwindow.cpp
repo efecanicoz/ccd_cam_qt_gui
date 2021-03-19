@@ -18,6 +18,7 @@ void WorkerThread::run()
     QByteArray framebuffer;
     QByteArray datagram;
     int i;
+    quint16 r[5400],g[5400],b[5400];
 
 
     fb.append(QString("P6 5400 1 255 "));
@@ -36,6 +37,7 @@ void WorkerThread::run()
     framebuffer.resize((16200 * 2));
 
 #define UDP_FRAME_SIZE (601)
+#define UDP_DATA_SIZE (UDP_FRAME_SIZE - 1)
 
     while(1)
     {
@@ -54,22 +56,37 @@ void WorkerThread::run()
             if(locked == true)
             {
                 if(frag_no != 53)
-                    framebuffer.replace((frag_no*UDP_FRAME_SIZE), UDP_FRAME_SIZE, (datagram.data()+1),UDP_FRAME_SIZE);
+                {
+                    framebuffer.replace((frag_no*UDP_DATA_SIZE), UDP_DATA_SIZE, (datagram.data()+1),UDP_DATA_SIZE);
+                    /*qDebug() << "frag no: " + QString::number(frag_no);
+                    for(i = 0; i < UDP_DATA_SIZE; i++)
+                    {
+                        fb[i + 14 + (frag_no * 300)]
+                    }*/
+                }
                 else
                 {
                     qDebug() << QDateTime::currentDateTime().toString("mm:ss,zzz");
-                    framebuffer.replace((frag_no*UDP_FRAME_SIZE), UDP_FRAME_SIZE, (datagram.data()+1),UDP_FRAME_SIZE);
+                    framebuffer.replace((frag_no*UDP_DATA_SIZE), UDP_DATA_SIZE, (datagram.data()+1),UDP_DATA_SIZE);
                     for(i = 0; i < (16200 - 1); i++)
                     {
                         quint16 tmp_u16;
-                        tmp_u16 = framebuffer[i]<<8 | framebuffer[i+1];
+                        tmp_u16 = framebuffer[(2*i)+1]<<8 | framebuffer[2*i];
+                        if(i%3==0)
+                            r[i/3] = tmp_u16;
+                        else if(i%3 == 1)
+                            g[i/3] = tmp_u16;
+                        else
+                            b[i/3] = tmp_u16;
+
+
                         tmp_u16 = tmp_u16 << 2;
                         fb[i+14] = (quint8)tmp_u16; //framebuffer[2*i+1];
                     }
                     raw_image->loadFromData(fb);
                     emit img_updated(); //let openglcanvas draw it
-                    qDebug() << QDateTime::currentDateTime().toString("mm:ss,zzz");
-                    qDebug() << "frame taken";
+                    //qDebug() << QDateTime::currentDateTime().toString("mm:ss,zzz");
+                    //qDebug() << "frame taken";
 
                 }
             }
