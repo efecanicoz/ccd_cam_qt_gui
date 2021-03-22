@@ -71,7 +71,8 @@ void WorkerThread::run()
                     for(i = 0; i < (16200 - 1); i++)
                     {
                         quint16 tmp_u16;
-                        tmp_u16 = framebuffer[(2*i)+1]<<8 | framebuffer[2*i];
+                        tmp_u16 = (quint16)framebuffer[(2*i)+1]<<8U;
+                        tmp_u16 |= (quint16)framebuffer[2*i] & 0x00FF;
                         if(i%3==0)
                             r[i/3] = tmp_u16;
                         else if(i%3 == 1)
@@ -80,13 +81,14 @@ void WorkerThread::run()
                             b[i/3] = tmp_u16;
 
 
-                        tmp_u16 = tmp_u16 << 2;
+                        //tmp_u16 = tmp_u16 << 2;
                         fb[i+14] = (quint8)tmp_u16; //framebuffer[2*i+1];
                     }
                     raw_image->loadFromData(fb);
                     emit img_updated(); //let openglcanvas draw it
                     //qDebug() << QDateTime::currentDateTime().toString("mm:ss,zzz");
                     //qDebug() << "frame taken";
+                    qDebug() << QString::number(r[0]) + " " + QString::number(g[0]) + " " + QString::number(b[0]);
 
                 }
             }
